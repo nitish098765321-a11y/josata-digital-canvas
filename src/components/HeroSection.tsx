@@ -5,7 +5,7 @@ import heroBg from "@/assets/hero-bg.jpg";
 
 export default function HeroSection() {
   return (
-    <section className="relative h-screen w-full overflow-hidden flex items-center">
+    <section className="relative min-h-screen w-full overflow-hidden flex items-center pt-24">
       {/* Animated background image with Ken Burns effect */}
       <div className="absolute inset-0">
         <img
