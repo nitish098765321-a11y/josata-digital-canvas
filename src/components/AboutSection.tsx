@@ -4,6 +4,7 @@ import { Shield, Cpu, Cloud, Lightbulb, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import aboutTeam from "@/assets/about-team.jpg";
 import aboutInnovation from "@/assets/about-innovation.jpg";
+import StatsChart from "./StatsChart";
 
 const capabilities = [
   {
@@ -97,11 +98,27 @@ export default function AboutSection() {
             className="relative"
           >
             <div className="rounded-2xl overflow-hidden glow-border">
-              <img src={aboutTeam} alt="Josata team at work" className="w-full h-80 object-cover" />
+              <motion.img
+                src={aboutTeam}
+                alt="Josata team at work"
+                className="w-full h-80 object-cover"
+                animate={{ scale: [1, 1.05, 1], x: [0, -5, 0] }}
+                transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
+              />
             </div>
-            <div className="absolute -bottom-6 -right-6 w-48 h-48 rounded-xl overflow-hidden border-4 border-background shadow-2xl hidden md:block">
-              <img src={aboutInnovation} alt="Technology innovation" className="w-full h-full object-cover" />
-            </div>
+            <motion.div
+              className="absolute -bottom-6 -right-6 w-48 h-48 rounded-xl overflow-hidden border-4 border-background shadow-2xl hidden md:block"
+              animate={{ y: [0, -8, 0] }}
+              transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+            >
+              <motion.img
+                src={aboutInnovation}
+                alt="Technology innovation"
+                className="w-full h-full object-cover"
+                animate={{ scale: [1, 1.08, 1] }}
+                transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+              />
+            </motion.div>
           </motion.div>
 
           <motion.div
@@ -134,25 +151,32 @@ export default function AboutSection() {
           </motion.div>
         </div>
 
-        {/* Stats row */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, delay: 0.4 }}
-          className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-24"
-        >
-          {[
-            { value: 200, suffix: "+", label: "Projects Delivered" },
-            { value: 500, suffix: "+", label: "Team Members" },
-            { value: 15, suffix: "+", label: "Global Offices" },
-            { value: 98, suffix: "%", label: "Client Retention" },
-          ].map((stat) => (
-            <div key={stat.label} className="stat-card text-center">
-              <AnimatedCounter value={stat.value} suffix={stat.suffix} />
-              <p className="text-muted-foreground mt-2 text-sm">{stat.label}</p>
-            </div>
-          ))}
-        </motion.div>
+        {/* Stats Chart + Stats Row side by side */}
+        <div className="grid lg:grid-cols-5 gap-8 mb-24">
+          <div className="lg:col-span-2">
+            <StatsChart />
+          </div>
+          <div className="lg:col-span-3 flex flex-col justify-center">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.6, delay: 0.4 }}
+              className="grid grid-cols-2 gap-6"
+            >
+              {[
+                { value: 200, suffix: "+", label: "Projects Delivered" },
+                { value: 500, suffix: "+", label: "Team Members" },
+                { value: 15, suffix: "+", label: "Global Offices" },
+                { value: 98, suffix: "%", label: "Client Retention" },
+              ].map((stat) => (
+                <div key={stat.label} className="stat-card text-center">
+                  <AnimatedCounter value={stat.value} suffix={stat.suffix} />
+                  <p className="text-muted-foreground mt-2 text-sm">{stat.label}</p>
+                </div>
+              ))}
+            </motion.div>
+          </div>
+        </div>
 
         {/* Capabilities grid */}
         <motion.div

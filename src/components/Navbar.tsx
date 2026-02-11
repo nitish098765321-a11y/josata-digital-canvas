@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, ChevronDown, Search, ArrowRight, Cloud, Shield, Brain, Cpu, Building2, Heart, Factory, ShoppingCart } from "lucide-react";
@@ -63,7 +63,8 @@ const navItems = [
   { label: "Insights", href: "/insights" },
   { label: "About Us", href: "/#about" },
   { label: "Contact", href: "/contact" },
-];
+  { label: "Search", href: "#", isSearch: true },
+] as const;
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -96,20 +97,17 @@ export default function Navbar() {
     return null;
   };
 
+  const [searchOpen, setSearchOpen] = useState(false);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (searchOpen && searchInputRef.current) {
+      searchInputRef.current.focus();
+    }
+  }, [searchOpen]);
+
   return (
     <header className="fixed top-0 left-0 right-0 z-50">
-      {/* Top utility bar */}
-      <div className={`border-b border-border/20 transition-all duration-500 ${scrolled ? "hidden" : ""}`}>
-        <div className="container mx-auto flex items-center justify-end gap-6 py-2 px-6 text-xs text-muted-foreground">
-          <Link to="/contact" className="footer-link hover:text-primary transition-colors">Careers</Link>
-          <Link to="/contact" className="footer-link hover:text-primary transition-colors">Partners</Link>
-          <button className="footer-link hover:text-primary transition-colors flex items-center gap-1">
-            <Search className="w-3 h-3" />
-            Search
-          </button>
-        </div>
-      </div>
-
       {/* Main navbar */}
       <motion.nav
         initial={{ y: -100 }}
@@ -136,31 +134,44 @@ export default function Navbar() {
 
           {/* Desktop links */}
           <div className="hidden lg:flex items-center gap-1">
-            {navItems.map((item) => (
-              <div
-                key={item.label}
-                className="relative"
-                onMouseEnter={() => item.megaMenu ? setActiveMega(item.megaMenu) : setActiveMega(null)}
-              >
-                <Link
-                  to={item.href}
-                  className={`flex items-center gap-1 px-4 py-2 text-sm font-medium transition-colors duration-300 rounded-lg hover:bg-secondary/50 ${
-                    activeMega === item.megaMenu
-                      ? "text-primary"
-                      : "text-foreground/80 hover:text-primary"
-                  }`}
+            {navItems.map((item) => {
+              if ('isSearch' in item && item.isSearch) {
+                return (
+                  <button
+                    key={item.label}
+                    onClick={() => setSearchOpen(!searchOpen)}
+                    className="flex items-center gap-1 px-4 py-2 text-sm font-medium transition-colors duration-300 rounded-lg hover:bg-secondary/50 text-foreground/80 hover:text-primary"
+                  >
+                    <Search className="w-4 h-4" />
+                  </button>
+                );
+              }
+              return (
+                <div
+                  key={item.label}
+                  className="relative"
+                  onMouseEnter={() => 'megaMenu' in item && item.megaMenu ? setActiveMega(item.megaMenu as string) : setActiveMega(null)}
                 >
-                  {item.label}
-                  {item.megaMenu && (
-                    <ChevronDown
-                      className={`w-3.5 h-3.5 transition-transform duration-300 ${
-                        activeMega === item.megaMenu ? "rotate-180" : ""
-                      }`}
-                    />
-                  )}
-                </Link>
-              </div>
-            ))}
+                  <Link
+                    to={item.href}
+                    className={`flex items-center gap-1 px-4 py-2 text-sm font-medium transition-colors duration-300 rounded-lg hover:bg-secondary/50 ${
+                      'megaMenu' in item && activeMega === item.megaMenu
+                        ? "text-primary"
+                        : "text-foreground/80 hover:text-primary"
+                    }`}
+                  >
+                    {item.label}
+                    {'megaMenu' in item && item.megaMenu && (
+                      <ChevronDown
+                        className={`w-3.5 h-3.5 transition-transform duration-300 ${
+                          activeMega === item.megaMenu ? "rotate-180" : ""
+                        }`}
+                      />
+                    )}
+                  </Link>
+                </div>
+              );
+            })}
           </div>
 
           {/* CTA + Mobile toggle */}
@@ -266,6 +277,39 @@ export default function Navbar() {
         </AnimatePresence>
       </motion.nav>
 
+      {/* Search overlay */}
+      <AnimatePresence>
+        {searchOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.25 }}
+            className="absolute left-0 right-0 top-full z-40 border-b border-border/30"
+          >
+            <div className="bg-background/95 backdrop-blur-2xl">
+              <div className="container mx-auto px-6 py-8">
+                <div className="relative max-w-2xl mx-auto">
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                  <input
+                    ref={searchInputRef}
+                    type="text"
+                    placeholder="Search services, insights, industries..."
+                    className="w-full bg-secondary/50 border border-border/50 rounded-xl pl-12 pr-12 py-4 text-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-all"
+                  />
+                  <button
+                    onClick={() => setSearchOpen(false)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Mobile menu */}
       <AnimatePresence>
         {mobileOpen && (
@@ -277,28 +321,31 @@ export default function Navbar() {
             className="fixed inset-0 z-40 bg-background/98 backdrop-blur-xl pt-24 px-6 lg:hidden overflow-y-auto"
           >
             <div className="flex flex-col gap-1">
-              {navItems.map((item, i) => (
+              {navItems.map((item, i) => {
+                if ('isSearch' in item && item.isSearch) return null;
+                const megaMenu = 'megaMenu' in item ? (item as any).megaMenu as string : undefined;
+                return (
                 <motion.div
                   key={item.label}
                   initial={{ opacity: 0, x: 40 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: i * 0.06 }}
                 >
-                  {item.megaMenu ? (
+                  {megaMenu ? (
                     <div>
                       <button
-                        onClick={() => setMobileExpanded(mobileExpanded === item.megaMenu ? null : item.megaMenu!)}
+                        onClick={() => setMobileExpanded(mobileExpanded === megaMenu ? null : megaMenu)}
                         className="flex items-center justify-between w-full px-4 py-4 text-xl font-display font-semibold text-foreground border-b border-border/30"
                       >
                         {item.label}
                         <ChevronDown
                           className={`w-5 h-5 text-muted-foreground transition-transform duration-300 ${
-                            mobileExpanded === item.megaMenu ? "rotate-180" : ""
+                            mobileExpanded === megaMenu ? "rotate-180" : ""
                           }`}
                         />
                       </button>
                       <AnimatePresence>
-                        {mobileExpanded === item.megaMenu && (
+                        {mobileExpanded === megaMenu && (
                           <motion.div
                             initial={{ height: 0, opacity: 0 }}
                             animate={{ height: "auto", opacity: 1 }}
@@ -307,7 +354,7 @@ export default function Navbar() {
                             className="overflow-hidden"
                           >
                             <div className="py-2 pl-4 space-y-1">
-                              {getMegaContent(item.megaMenu!)?.items.map((sub) => {
+                              {getMegaContent(megaMenu)?.items.map((sub) => {
                                 const Icon = sub.icon;
                                 return (
                                   <Link
@@ -337,7 +384,8 @@ export default function Navbar() {
                     </Link>
                   )}
                 </motion.div>
-              ))}
+                );
+              })}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
