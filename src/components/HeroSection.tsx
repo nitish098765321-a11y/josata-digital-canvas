@@ -1,47 +1,130 @@
-import { motion } from "framer-motion";
-import { ArrowRight, Play } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ArrowRight, Play, ChevronLeft, ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
-import heroBg from "@/assets/hero-bg.jpg";
+import heroSlide1 from "@/assets/hero-slide-1.jpg";
+import heroSlide2 from "@/assets/hero-slide-2.jpg";
+import heroSlide3 from "@/assets/hero-slide-3.jpg";
+import heroSlide4 from "@/assets/hero-slide-4.jpg";
+
+const slides = [
+  { src: heroSlide1, alt: "Futuristic data center infrastructure" },
+  { src: heroSlide2, alt: "Engineering team with holographic displays" },
+  { src: heroSlide3, alt: "Cloud computing network visualization" },
+  { src: heroSlide4, alt: "AI neural network visualization" },
+];
+
+const INTERVAL = 5000;
 
 export default function HeroSection() {
+  const [current, setCurrent] = useState(0);
+  const [direction, setDirection] = useState(1);
+
+  const goTo = useCallback(
+    (index: number) => {
+      setDirection(index > current ? 1 : -1);
+      setCurrent(index);
+    },
+    [current]
+  );
+
+  const next = useCallback(() => {
+    setDirection(1);
+    setCurrent((p) => (p + 1) % slides.length);
+  }, []);
+
+  const prev = useCallback(() => {
+    setDirection(-1);
+    setCurrent((p) => (p - 1 + slides.length) % slides.length);
+  }, []);
+
+  useEffect(() => {
+    const timer = setInterval(next, INTERVAL);
+    return () => clearInterval(timer);
+  }, [next]);
+
+  const slideVariants = {
+    enter: (d: number) => ({ x: d > 0 ? "100%" : "-100%", opacity: 0, scale: 1.1 }),
+    center: { x: 0, opacity: 1, scale: 1 },
+    exit: (d: number) => ({ x: d > 0 ? "-50%" : "50%", opacity: 0, scale: 1.05 }),
+  };
+
   return (
     <section className="relative min-h-screen w-full overflow-hidden flex items-center pt-24">
-      {/* Animated background image with Ken Burns effect */}
+      {/* Slideshow background */}
       <div className="absolute inset-0">
-        <img
-          src={heroBg}
-          alt="Futuristic technology background"
-          className="w-full h-full object-cover animate-ken-burns"
+        <AnimatePresence initial={false} custom={direction} mode="popLayout">
+          <motion.img
+            key={current}
+            src={slides[current].src}
+            alt={slides[current].alt}
+            className="absolute inset-0 w-full h-full object-cover"
+            custom={direction}
+            variants={slideVariants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{ duration: 1.2, ease: [0.25, 0.1, 0.25, 1] }}
+          />
+        </AnimatePresence>
+
+        {/* Ken Burns on the visible slide */}
+        <motion.div
+          key={`kb-${current}`}
+          className="absolute inset-0"
+          animate={{ scale: [1, 1.08], x: ["0%", "-1%"], y: ["0%", "-0.5%"] }}
+          transition={{ duration: 10, ease: "linear", repeat: Infinity, repeatType: "reverse" }}
         />
+
         <div className="hero-overlay absolute inset-0" />
       </div>
 
-      {/* Floating particles effect */}
+      {/* Prev / Next buttons */}
+      <button
+        onClick={prev}
+        className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full glass-surface flex items-center justify-center text-foreground hover:text-primary transition-colors duration-300 hover:scale-110"
+        aria-label="Previous slide"
+      >
+        <ChevronLeft className="w-6 h-6" />
+      </button>
+      <button
+        onClick={next}
+        className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full glass-surface flex items-center justify-center text-foreground hover:text-primary transition-colors duration-300 hover:scale-110"
+        aria-label="Next slide"
+      >
+        <ChevronRight className="w-6 h-6" />
+      </button>
+
+      {/* Dot indicators */}
+      <div className="absolute bottom-28 md:bottom-32 left-1/2 -translate-x-1/2 z-20 flex gap-3">
+        {slides.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => goTo(i)}
+            className={`h-2 rounded-full transition-all duration-500 ${
+              i === current
+                ? "w-8 bg-primary"
+                : "w-2 bg-muted-foreground/40 hover:bg-muted-foreground/70"
+            }`}
+            aria-label={`Go to slide ${i + 1}`}
+          />
+        ))}
+      </div>
+
+      {/* Floating particles */}
       <div className="absolute inset-0 pointer-events-none">
         {[...Array(6)].map((_, i) => (
           <motion.div
             key={i}
             className="absolute w-1 h-1 rounded-full bg-primary/40"
-            style={{
-              left: `${15 + i * 15}%`,
-              top: `${20 + (i % 3) * 25}%`,
-            }}
-            animate={{
-              y: [-20, 20, -20],
-              opacity: [0.2, 0.8, 0.2],
-              scale: [1, 1.5, 1],
-            }}
-            transition={{
-              duration: 4 + i,
-              repeat: Infinity,
-              ease: "easeInOut",
-              delay: i * 0.5,
-            }}
+            style={{ left: `${15 + i * 15}%`, top: `${20 + (i % 3) * 25}%` }}
+            animate={{ y: [-20, 20, -20], opacity: [0.2, 0.8, 0.2], scale: [1, 1.5, 1] }}
+            transition={{ duration: 4 + i, repeat: Infinity, ease: "easeInOut", delay: i * 0.5 }}
           />
         ))}
       </div>
 
-      {/* Glowing line at bottom */}
+      {/* Glowing line */}
       <div className="absolute bottom-0 left-0 right-0">
         <motion.div
           className="line-glow"
@@ -93,18 +176,18 @@ export default function HeroSection() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.9 }}
-            className="flex flex-wrap gap-4"
+            className="flex flex-col sm:flex-row gap-4"
           >
             <Link
               to="/contact"
-              className="group gradient-primary inline-flex items-center gap-2 px-8 py-4 rounded-xl text-primary-foreground font-semibold text-lg transition-all duration-300 hover:shadow-xl hover:shadow-primary/25 hover:scale-105"
+              className="group gradient-primary inline-flex items-center justify-center gap-3 px-8 py-4 rounded-xl text-primary-foreground font-semibold text-lg transition-all duration-300 hover:shadow-xl hover:shadow-primary/25 hover:scale-105"
             >
               Start Your Journey
               <ArrowRight className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" />
             </Link>
             <Link
               to="/services"
-              className="group inline-flex items-center gap-2 px-8 py-4 rounded-xl border border-border/60 text-foreground font-semibold text-lg backdrop-blur-sm hover:border-primary/50 hover:bg-primary/5 transition-all duration-300"
+              className="group inline-flex items-center justify-center gap-3 px-8 py-4 rounded-xl border border-border/60 text-foreground font-semibold text-lg backdrop-blur-sm hover:border-primary/50 hover:bg-primary/5 transition-all duration-300"
             >
               <Play className="w-5 h-5 text-primary" />
               Explore Services
