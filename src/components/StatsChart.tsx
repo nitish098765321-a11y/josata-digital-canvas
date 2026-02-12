@@ -1,4 +1,4 @@
-import { motion, useInView } from "framer-motion";
+import { motion, useInView, AnimatePresence } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
 
 const chartData = [
@@ -15,38 +15,81 @@ const ringData = [
   { label: "On-Time Delivery", value: 92, size: 100, color: "hsl(260, 70%, 60%)" },
 ];
 
+const barDetails: Record<string, string> = {
+  Cloud: "AWS, Azure & GCP certified. 150+ cloud migrations completed with 99.9% uptime guarantee.",
+  "AI/ML": "Deep learning, NLP & computer vision. 50+ production AI models deployed across industries.",
+  Security: "Zero-trust architecture, SOC 2 compliant. 500+ vulnerability assessments conducted.",
+  DevOps: "CI/CD pipelines, Kubernetes & IaC. Average deployment frequency improved by 300%.",
+  Data: "Real-time analytics, data lakes & ETL. Processing 2.5B+ data points monthly.",
+};
+
 function AnimatedBar({ item, index, isInView }: { item: typeof chartData[0]; index: number; isInView: boolean }) {
+  const [hovered, setHovered] = useState(false);
+
   return (
-    <div className="flex items-center gap-3">
-      <span className="text-xs text-muted-foreground w-16 text-right font-medium">{item.label}</span>
-      <div className="flex-1 h-3 rounded-full bg-secondary/50 overflow-hidden">
-        <motion.div
-          className="h-full rounded-full"
-          style={{ background: item.color }}
-          initial={{ width: 0 }}
-          animate={isInView ? { width: `${item.value}%` } : { width: 0 }}
-          transition={{ duration: 1.2, delay: 0.2 + index * 0.15, ease: "easeOut" }}
-        />
+    <div
+      className="group cursor-pointer transition-all duration-300"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      <div className="flex items-center gap-3">
+        <span className="text-xs text-muted-foreground w-16 text-right font-medium group-hover:text-primary transition-colors">{item.label}</span>
+        <div className="flex-1 h-3 rounded-full bg-secondary/50 overflow-hidden group-hover:h-4 transition-all duration-300">
+          <motion.div
+            className="h-full rounded-full transition-shadow duration-300"
+            style={{ background: item.color, boxShadow: hovered ? `0 0 12px ${item.color}` : 'none' }}
+            initial={{ width: 0 }}
+            animate={isInView ? { width: `${item.value}%` } : { width: 0 }}
+            transition={{ duration: 1.2, delay: 0.2 + index * 0.15, ease: "easeOut" }}
+          />
+        </div>
+        <motion.span
+          className="text-xs font-semibold text-foreground w-10 group-hover:text-primary transition-colors"
+          initial={{ opacity: 0 }}
+          animate={isInView ? { opacity: 1 } : { opacity: 0 }}
+          transition={{ delay: 0.8 + index * 0.15 }}
+        >
+          {item.value}%
+        </motion.span>
       </div>
-      <motion.span
-        className="text-xs font-semibold text-foreground w-10"
-        initial={{ opacity: 0 }}
-        animate={isInView ? { opacity: 1 } : { opacity: 0 }}
-        transition={{ delay: 0.8 + index * 0.15 }}
-      >
-        {item.value}%
-      </motion.span>
+      <AnimatePresence>
+        {hovered && (
+          <motion.p
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.2 }}
+            className="text-xs text-muted-foreground pl-[76px] pr-10 pt-1 leading-relaxed"
+          >
+            {barDetails[item.label]}
+          </motion.p>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
 
+const ringDetails: Record<string, string> = {
+  "Client Satisfaction": "Based on 1,200+ client surveys. Net Promoter Score of 82.",
+  "Project Success": "Measured across 500+ enterprise engagements worldwide.",
+  "On-Time Delivery": "Agile methodology with sprint-level tracking and transparency.",
+};
+
 function AnimatedRing({ item, index, isInView }: { item: typeof ringData[0]; index: number; isInView: boolean }) {
+  const [hovered, setHovered] = useState(false);
   const circumference = Math.PI * item.size;
   const strokeWidth = 8;
 
   return (
-    <div className="flex flex-col items-center gap-2">
-      <div className="relative" style={{ width: item.size + 20, height: (item.size + 20) / 2 + 10 }}>
+    <div
+      className="flex flex-col items-center gap-2 cursor-pointer group"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      <div
+        className="relative transition-transform duration-300 group-hover:scale-110"
+        style={{ width: item.size + 20, height: (item.size + 20) / 2 + 10 }}
+      >
         <svg
           width={item.size + 20}
           height={(item.size + 20) / 2 + 10}
@@ -82,7 +125,20 @@ function AnimatedRing({ item, index, isInView }: { item: typeof ringData[0]; ind
           {item.value}%
         </motion.span>
       </div>
-      <span className="text-xs text-muted-foreground text-center">{item.label}</span>
+      <span className="text-xs text-muted-foreground text-center group-hover:text-primary transition-colors">{item.label}</span>
+      <AnimatePresence>
+        {hovered && (
+          <motion.p
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.2 }}
+            className="text-xs text-muted-foreground text-center max-w-[160px] leading-relaxed"
+          >
+            {ringDetails[item.label]}
+          </motion.p>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

@@ -204,7 +204,7 @@ export default function Navbar() {
               onMouseEnter={() => setActiveMega(activeMega)}
               onMouseLeave={() => setActiveMega(null)}
             >
-              <div className="bg-background/95 backdrop-blur-2xl">
+              <div className="bg-background backdrop-blur-2xl border-t border-border/20">
                 <div className="container mx-auto px-6 py-10">
                   {/* Tagline */}
                   <motion.p
