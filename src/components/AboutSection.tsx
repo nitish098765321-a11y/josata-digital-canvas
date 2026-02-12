@@ -2,7 +2,7 @@ import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 import { Shield, Cpu, Cloud, Lightbulb, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
-import aboutTeam from "@/assets/about-team.jpg";
+import aboutTeamVideo from "@/assets/about-team-video.mp4";
 import aboutInnovation from "@/assets/about-innovation.jpg";
 import StatsChart from "./StatsChart";
 
@@ -98,12 +98,13 @@ export default function AboutSection() {
             className="relative"
           >
             <div className="rounded-2xl overflow-hidden glow-border">
-              <motion.img
-                src={aboutTeam}
-                alt="Josata team at work"
+              <video
+                src={aboutTeamVideo}
+                autoPlay
+                loop
+                muted
+                playsInline
                 className="w-full h-80 object-cover"
-                animate={{ scale: [1, 1.05, 1], x: [0, -5, 0] }}
-                transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
               />
             </div>
             <motion.div
