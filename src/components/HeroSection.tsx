@@ -111,15 +111,65 @@ export default function HeroSection() {
         ))}
       </div>
 
-      {/* Floating particles */}
-      <div className="absolute inset-0 pointer-events-none">
-        {[...Array(6)].map((_, i) => (
+      {/* Animated particles & streaks */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        {/* Floating orbs */}
+        {[...Array(12)].map((_, i) => (
           <motion.div
-            key={i}
-            className="absolute w-1 h-1 rounded-full bg-primary/40"
-            style={{ left: `${15 + i * 15}%`, top: `${20 + (i % 3) * 25}%` }}
-            animate={{ y: [-20, 20, -20], opacity: [0.2, 0.8, 0.2], scale: [1, 1.5, 1] }}
-            transition={{ duration: 4 + i, repeat: Infinity, ease: "easeInOut", delay: i * 0.5 }}
+            key={`orb-${i}`}
+            className="absolute rounded-full"
+            style={{
+              width: 4 + (i % 4) * 3,
+              height: 4 + (i % 4) * 3,
+              left: `${(i * 8.3) % 100}%`,
+              top: `${(i * 13.7) % 100}%`,
+              background: i % 3 === 0 ? 'hsl(var(--primary) / 0.6)' : i % 3 === 1 ? 'hsl(var(--glow-coral) / 0.5)' : 'hsl(var(--primary) / 0.3)',
+            }}
+            animate={{
+              y: [0, -80 - i * 15, 0],
+              x: [0, (i % 2 === 0 ? 40 : -40), 0],
+              opacity: [0.1, 0.7, 0.1],
+              scale: [1, 1.8, 1],
+            }}
+            transition={{ duration: 6 + i * 1.2, repeat: Infinity, ease: "easeInOut", delay: i * 0.6 }}
+          />
+        ))}
+        {/* Diagonal light streaks */}
+        {[...Array(4)].map((_, i) => (
+          <motion.div
+            key={`streak-${i}`}
+            className="absolute h-px origin-left"
+            style={{
+              width: 200 + i * 60,
+              top: `${20 + i * 20}%`,
+              left: '-10%',
+              background: `linear-gradient(90deg, transparent, hsl(var(--primary) / 0.3), transparent)`,
+              transform: `rotate(${-15 + i * 5}deg)`,
+            }}
+            animate={{
+              x: ['-100%', '200%'],
+              opacity: [0, 0.6, 0],
+            }}
+            transition={{ duration: 8 + i * 2, repeat: Infinity, ease: "linear", delay: i * 3 }}
+          />
+        ))}
+        {/* Pulsing glow spots */}
+        {[...Array(3)].map((_, i) => (
+          <motion.div
+            key={`glow-${i}`}
+            className="absolute rounded-full blur-3xl"
+            style={{
+              width: 150 + i * 80,
+              height: 150 + i * 80,
+              left: `${20 + i * 25}%`,
+              top: `${30 + i * 15}%`,
+              background: i === 0 ? 'hsl(var(--primary) / 0.08)' : i === 1 ? 'hsl(var(--glow-coral) / 0.06)' : 'hsl(270 80% 70% / 0.05)',
+            }}
+            animate={{
+              scale: [1, 1.4, 1],
+              opacity: [0.3, 0.7, 0.3],
+            }}
+            transition={{ duration: 5 + i * 2, repeat: Infinity, ease: "easeInOut", delay: i * 1.5 }}
           />
         ))}
       </div>
@@ -176,7 +226,7 @@ export default function HeroSection() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.9 }}
-            className="flex flex-col sm:flex-row gap-4"
+            className="flex flex-col sm:flex-row gap-4 mt-6 mb-16"
           >
             <Link
               to="/contact"
@@ -194,35 +244,6 @@ export default function HeroSection() {
             </Link>
           </motion.div>
         </div>
-
-        {/* Stats strip */}
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 1.2 }}
-          className="absolute bottom-12 left-6 right-6 hidden md:flex"
-        >
-          <div className="container mx-auto flex items-center gap-12 text-sm">
-            {[
-              { value: "200+", label: "Projects Delivered" },
-              { value: "50+", label: "Enterprise Clients" },
-              { value: "15+", label: "Countries Served" },
-              { value: "99.9%", label: "Uptime Guaranteed" },
-            ].map((stat, i) => (
-              <motion.div
-                key={stat.label}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 1.4 + i * 0.15 }}
-                className="flex items-center gap-4"
-              >
-                <span className="text-2xl font-display font-bold text-primary">{stat.value}</span>
-                <span className="text-muted-foreground">{stat.label}</span>
-                {i < 3 && <div className="h-8 w-px bg-border/50 ml-8" />}
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
       </div>
     </section>
   );
