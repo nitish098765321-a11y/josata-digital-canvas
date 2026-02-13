@@ -156,7 +156,20 @@ export default function AboutSection() {
         {/* Stats Chart + Stats Row side by side */}
         <div className="grid lg:grid-cols-5 gap-8 mb-24">
           <div className="lg:col-span-2">
-            <StatsChart />
+            <ExpandableCard
+              className=""
+              expandedContent={
+                <div>
+                  <h3 className="text-lg font-display font-bold text-foreground mb-3">Detailed Analytics</h3>
+                  <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
+                    Our expertise spans the full technology spectrum. These metrics reflect real project outcomes, client feedback, and operational benchmarks across 500+ global engagements.
+                  </p>
+                  <StatsChart />
+                </div>
+              }
+            >
+              <StatsChart />
+            </ExpandableCard>
           </div>
           <div className="lg:col-span-3 flex flex-col justify-center">
             <motion.div
