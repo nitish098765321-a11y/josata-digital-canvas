@@ -3,6 +3,7 @@ import { Float, MeshDistortMaterial, Sphere, Torus, OrbitControls, Trail } from 
 import { useRef, useMemo } from "react";
 import * as THREE from "three";
 import { motion } from "framer-motion";
+import { Globe, Server, Zap, Shield, ArrowRight } from "lucide-react";
 
 function NetworkNode({ position, color }: { position: [number, number, number]; color: string }) {
   const ref = useRef<THREE.Mesh>(null!);
@@ -144,7 +145,8 @@ export default function TechModel3D() {
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-primary/5 blur-[150px] pointer-events-none" />
 
       <div className="container mx-auto px-6 relative z-10">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+        {/* Top row: Text + 3D Canvas */}
+        <div className="grid lg:grid-cols-2 gap-12 items-center mb-16">
           {/* Text */}
           <motion.div
             initial={{ opacity: 0, x: -40 }}
@@ -167,11 +169,32 @@ export default function TechModel3D() {
               connecting enterprises with AI-driven insights across every node of their
               digital ecosystem.
             </p>
-            <p className="text-muted-foreground leading-relaxed">
+            <p className="text-muted-foreground leading-relaxed mb-8">
               Interact with the model to explore our distributed architecture — a living
               representation of how we orchestrate cloud, AI, and security services
               across continents.
             </p>
+
+            {/* Network stats strip */}
+            <div className="grid grid-cols-3 gap-4">
+              {[
+                { value: "15+", label: "Global Regions" },
+                { value: "99.99%", label: "Network Uptime" },
+                { value: "<50ms", label: "Avg Latency" },
+              ].map((stat, i) => (
+                <motion.div
+                  key={stat.label}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.4 + i * 0.1 }}
+                  className="text-center p-3 rounded-xl bg-secondary/30 border border-border/20"
+                >
+                  <span className="text-xl font-display font-bold gradient-text">{stat.value}</span>
+                  <p className="text-xs text-muted-foreground mt-1">{stat.label}</p>
+                </motion.div>
+              ))}
+            </div>
           </motion.div>
 
           {/* 3D Canvas */}
@@ -187,6 +210,79 @@ export default function TechModel3D() {
             </Canvas>
           </motion.div>
         </div>
+
+        {/* Infrastructure pillars */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+          className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16"
+        >
+          {[
+            {
+              icon: Globe,
+              title: "Edge Computing",
+              desc: "Deploy workloads closer to users with our 200+ edge locations, reducing latency by up to 80%.",
+            },
+            {
+              icon: Server,
+              title: "Hybrid Cloud",
+              desc: "Seamlessly bridge on-premise and cloud environments with our unified orchestration layer.",
+            },
+            {
+              icon: Zap,
+              title: "Real-Time Sync",
+              desc: "Event-driven architecture processes 2M+ events per second with sub-millisecond propagation.",
+            },
+            {
+              icon: Shield,
+              title: "Zero-Trust Mesh",
+              desc: "Every node is authenticated and encrypted — no implicit trust, anywhere in the network.",
+            },
+          ].map((pillar, i) => (
+            <motion.div
+              key={pillar.title}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.4 + i * 0.1 }}
+              className="group stat-card"
+            >
+              <div className="w-12 h-12 rounded-xl gradient-primary flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-110">
+                <pillar.icon className="w-6 h-6 text-primary-foreground" />
+              </div>
+              <h4 className="font-display font-semibold text-foreground mb-2">{pillar.title}</h4>
+              <p className="text-sm text-muted-foreground leading-relaxed">{pillar.desc}</p>
+            </motion.div>
+          ))}
+        </motion.div>
+
+        {/* Bottom CTA banner */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.5 }}
+          className="glass-surface glow-border rounded-2xl p-8 md:p-10 flex flex-col md:flex-row items-center justify-between gap-6"
+        >
+          <div>
+            <h3 className="text-2xl font-display font-bold text-foreground mb-2">
+              Ready to Scale Your Infrastructure?
+            </h3>
+            <p className="text-muted-foreground max-w-xl">
+              Join 200+ enterprises already leveraging our distributed network for faster deployments,
+              smarter automation, and unbreakable security.
+            </p>
+          </div>
+          <a
+            href="/contact"
+            className="group inline-flex items-center gap-2 px-6 py-3 rounded-xl gradient-primary text-primary-foreground font-semibold hover:gap-3 transition-all duration-300 whitespace-nowrap"
+          >
+            Get Started
+            <ArrowRight className="w-4 h-4" />
+          </a>
+        </motion.div>
       </div>
     </section>
   );
