@@ -1,5 +1,6 @@
 import HeroSection from "@/components/HeroSection";
 import AboutSection from "@/components/AboutSection";
+import TechModel3D from "@/components/TechModel3D";
 import Footer from "@/components/Footer";
 
 const Index = () => {
@@ -7,6 +8,7 @@ const Index = () => {
     <main>
       <HeroSection />
       <AboutSection />
+      <TechModel3D />
       <Footer />
     </main>
   );

@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import aboutTeamVideo from "@/assets/about-team-video.mp4";
 import aboutInnovation from "@/assets/about-innovation.jpg";
 import StatsChart from "./StatsChart";
+import ExpandableCard from "./ExpandableCard";
 
 const capabilities = [
   {
@@ -165,15 +166,25 @@ export default function AboutSection() {
               className="grid grid-cols-2 gap-6"
             >
               {[
-                { value: 200, suffix: "+", label: "Projects Delivered" },
-                { value: 500, suffix: "+", label: "Team Members" },
-                { value: 15, suffix: "+", label: "Global Offices" },
-                { value: 98, suffix: "%", label: "Client Retention" },
+                { value: 200, suffix: "+", label: "Projects Delivered", detail: "From cloud migrations to full-stack platforms, we've successfully delivered over 200 enterprise-grade projects across 30+ industries worldwide." },
+                { value: 500, suffix: "+", label: "Team Members", detail: "Our diverse team of 500+ engineers, architects, and strategists spans 15 global offices, bringing deep expertise in every major technology stack." },
+                { value: 15, suffix: "+", label: "Global Offices", detail: "Strategically located across North America, Europe, and Asia-Pacific, our offices ensure round-the-clock support and local market expertise." },
+                { value: 98, suffix: "%", label: "Client Retention", detail: "Our 98% client retention rate reflects our commitment to long-term partnerships, continuous innovation, and measurable business outcomes." },
               ].map((stat) => (
-                <div key={stat.label} className="stat-card text-center">
+                <ExpandableCard
+                  key={stat.label}
+                  className="stat-card text-center"
+                  expandedContent={
+                    <div className="text-center">
+                      <AnimatedCounter value={stat.value} suffix={stat.suffix} />
+                      <p className="text-muted-foreground mt-2 text-sm font-semibold">{stat.label}</p>
+                      <p className="text-muted-foreground mt-4 leading-relaxed">{stat.detail}</p>
+                    </div>
+                  }
+                >
                   <AnimatedCounter value={stat.value} suffix={stat.suffix} />
                   <p className="text-muted-foreground mt-2 text-sm">{stat.label}</p>
-                </div>
+                </ExpandableCard>
               ))}
             </motion.div>
           </div>
@@ -195,13 +206,25 @@ export default function AboutSection() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ delay: 0.6 + i * 0.1 }}
-                className="group stat-card cursor-pointer"
               >
-                <div className="w-12 h-12 rounded-xl gradient-primary flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-110">
-                  <cap.icon className="w-6 h-6 text-primary-foreground" />
-                </div>
-                <h4 className="font-display font-semibold text-foreground mb-2">{cap.title}</h4>
-                <p className="text-sm text-muted-foreground">{cap.desc}</p>
+                <ExpandableCard
+                  className="group stat-card"
+                  expandedContent={
+                    <div>
+                      <div className="w-14 h-14 rounded-xl gradient-primary flex items-center justify-center mb-5">
+                        <cap.icon className="w-7 h-7 text-primary-foreground" />
+                      </div>
+                      <h4 className="font-display font-semibold text-foreground text-lg mb-3">{cap.title}</h4>
+                      <p className="text-muted-foreground leading-relaxed">{cap.desc}</p>
+                    </div>
+                  }
+                >
+                  <div className="w-12 h-12 rounded-xl gradient-primary flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-110">
+                    <cap.icon className="w-6 h-6 text-primary-foreground" />
+                  </div>
+                  <h4 className="font-display font-semibold text-foreground mb-2">{cap.title}</h4>
+                  <p className="text-sm text-muted-foreground">{cap.desc}</p>
+                </ExpandableCard>
               </motion.div>
             ))}
           </div>
