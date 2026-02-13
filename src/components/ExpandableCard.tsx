@@ -40,7 +40,7 @@ export default function ExpandableCard({ children, expandedContent, className = 
               exit={{ opacity: 0 }}
             >
               <motion.div
-                className="glass-surface glow-border rounded-2xl p-10 max-w-lg w-full pointer-events-auto relative"
+                className="glass-surface glow-border rounded-2xl p-8 md:p-10 max-w-2xl w-full max-h-[85vh] overflow-y-auto pointer-events-auto relative"
                 initial={{ scale: 0.7, opacity: 0, y: 40 }}
                 animate={{ scale: 1, opacity: 1, y: 0 }}
                 exit={{ scale: 0.7, opacity: 0, y: 40 }}

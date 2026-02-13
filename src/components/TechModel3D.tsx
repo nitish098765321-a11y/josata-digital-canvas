@@ -141,7 +141,7 @@ function Scene() {
 
 export default function TechModel3D() {
   return (
-    <section className="relative page-section overflow-hidden">
+    <section className="relative py-10 md:py-16 overflow-hidden">
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-primary/5 blur-[150px] pointer-events-none" />
 
       <div className="container mx-auto px-6 relative z-10">
