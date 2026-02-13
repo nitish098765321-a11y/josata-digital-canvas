@@ -61,7 +61,7 @@ export default function AboutSection() {
   const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
 
   return (
-    <section id="about" ref={sectionRef} className="relative page-section overflow-hidden">
+    <section id="about" ref={sectionRef} className="relative py-20 md:py-28 overflow-hidden">
       {/* Background gradient */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[800px] rounded-full bg-primary/3 blur-[200px] pointer-events-none" />
 
